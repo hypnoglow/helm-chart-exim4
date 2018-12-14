@@ -1,0 +1,26 @@
+# Default values for exim4.
+
+replicaCount: 1
+
+image:
+  repository: tianon/exim4
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 1025
+
+resources: {}
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

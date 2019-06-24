@@ -24,3 +24,21 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+configFiles:
+  # See: https://wiki.debian.org/Exim#Single_Exim4_configuration_file
+  localmacros: |
+    # Base configuration options.
+    disable_ipv6 = true
+
+# This section allows to enable Gmail relay.
+#
+# Note that creating a secret with credentials is not the responsibility
+# of this Helm Chart, due to security reasons.
+gmail:
+  user:
+    secretName: exim4-gmail
+    secretKey: gmail-user
+  password:
+    secretname: exim4-gmail
+    secretKey: gmail-password

@@ -23,9 +23,26 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- if .Values.gmail }}
+            - name: GMAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gmail.user.secretName }}
+                  key: {{ .Values.gmail.user.secretKey }}
+            - name: GMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gmail.password.secretname }}
+                  key: {{ .Values.gmail.password.secretKey }}
+            {{- end }}
           ports:
             - containerPort: 25
           resources: {{ toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-files
+              mountPath: /etc/exim4/exim4.conf.localmacros
+              subPath: localmacros
       {{- with .Values.nodeSelector }}
       nodeSelector: {{ toYaml . | nindent 8 }}
       {{- end }}
@@ -35,3 +52,7 @@ spec:
       {{- with .Values.tolerations }}
       tolerations: {{ toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: config-files
+          configMap:
+            name: {{ template "exim4.fullname" . }}-files
